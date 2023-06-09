@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSS -->
+    <link href="../css/editor.css" rel="stylesheet">
+
+    <title>Image - CyberMechanical</title>
+  </head>
+  <body>
+    
+    <div class="__body_wrapper">
+      <div class="container">
+
+        <div class="__form_wrapper">
+
+          <h1 id="__site_title" class="collapsed" data-bs-toggle="collapse" data-bs-target="#__form_container" aria-expanded="true" aria-controls="__form_container">HTML to Image</h1>
+
+          <div id="__form_container" class="collapse">
+            <div class="__form">
+              <div class="__form_controls">
+                <div class="row">
+                  <div class="col-12">
+                    <label for="__paste_code_box" class="form-label">Code:</label>
+                    <textarea class="form-control" id="__paste_code_box" placeholder="Paste code here..."></textarea>
+                  </div>
+                  <div class="col-12">
+                    <label for="__image_title" class="form-label">Product SKU:</label>
+                    <input type="text" class="form-control" id="__image_title" placeholder="SKU">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="__form_button_wrapper">
+              <button id="__show_preview" type="button" class="btn">Show Preview</button>
+              <div id="__form_message"><!-- <span class="text-danger">No File Uploaded...</span> --></div>
+            </div>
+          </div>
+
+        </div>
+
+        <div id="__footer">Copyright &copy; <a href="mailto:sdnath2020@gmail.com" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Mail to: sdnath2020@gmail.com">Dev Nath</a></div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="__preview_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="PreviewModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title" id="PreviewModalLabel">Template Preview</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div id="__preview_description" class="modal-body">
+            ...
+          </div>
+          <!-- <textarea id="__code_description" readonly></textarea> -->
+          <div class="modal-footer">
+            <button type="button" id="__modal_close" class="btn" data-bs-dismiss="modal">Close</button>
+            <button type="button" id="__download_image" class="btn">Download Image</button>
+            <!-- <button type="button" id="__copy_code" class="btn">Copy Code</button> -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+
+  
+
+    <script>
+
+      // Tooltip...
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+      // Selectors...
+      const image_title = document.getElementById("__image_title");
+      const form_message = document.getElementById("__form_message");
+      const show_preview = document.getElementById("__show_preview");
+      const preview_modal = document.getElementById("__preview_modal");
+      const paste_code_box = document.getElementById("__paste_code_box");
+      const download_image = document.getElementById("__download_image");
+      const preview_description = document.getElementById("__preview_description");
+      
+
+      // Modal...
+      var previewModal = new bootstrap.Modal(preview_modal, {});
+      show_preview.onclick = (e) => {
+        if (image_title.value.trim() != "") {
+          if (paste_code_box.value.trim() != "") {
+            preview_description.innerHTML = paste_code_box.value.trim();
+            if (document.getElementsByClassName("__des_section").length <= 0) {
+              download_image.style.display = "none";
+            } else {
+              download_image.style.display = "inline-block";
+            }
+            previewModal.show();
+          } else {
+            form_message.innerText = "Code Area Empty...!";
+            setTimeout(()=>{
+              form_message.innerText = "";
+            }, 2500)
+          }
+        } else {
+          form_message.innerText = "Product SKU Missing...!";
+          setTimeout(()=>{
+            form_message.innerText = "";
+          }, 2500)
+        }
+      }
+
+      // Download Image
+      download_image.addEventListener("click", ()=>{
+        download_image.innerText = "Downloading...";
+        let des_section = document.getElementsByClassName("__des_section");
+        [...des_section].forEach((des, index) => {
+          let img_title = "";
+          domtoimage.toJpeg(des, {
+            width: des.clientWidth * 5,
+            height: des.clientHeight * 5,
+            style: {
+              backgroundColor: "#FFFFFF",
+              transform: "scale(5)",
+              transformOrigin: "top left"
+            }
+          })
+          .then( dataUrl =>{
+            var link = document.createElement("a");
+            link.download = `${image_title.value.trim()}___${des.getElementsByClassName("__des_section_title")[0].innerText.toLowerCase().replace(/\s/g,"_")}.jpeg`;
+            link.href = dataUrl;
+            link.click();
+            setTimeout(()=>{
+              download_image.innerText = "Download Image";
+            }, 2500)
+            link.remove();
+          })
+          .catch( error => {
+            console.error('oops, something went wrong!', error);
+            setTimeout(()=>{
+              download_image.innerText = "Download Image";
+            }, 1000)
+          });
+        });
+      })
+
+    </script>
+  </body>
+</html>
