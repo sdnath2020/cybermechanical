@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- CSS -->
-    <link href="https://sdnath2020.github.io/cybermechanical/css/editor.css" rel="stylesheet">
+    <link href="../css/editor.css" rel="stylesheet">
 
     <title>Editor - CyberMechanical</title>
   </head>
@@ -85,6 +85,7 @@
           <textarea id="__code_description" readonly></textarea>
           <div class="modal-footer">
             <button type="button" id="__modal_close" class="btn" data-bs-dismiss="modal">Close</button>
+            <button type="button" id="__download_image" class="btn">Download Image</button>
             <button type="button" id="__copy_code" class="btn">Copy Code</button>
           </div>
         </div>
@@ -96,28 +97,29 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.ckeditor.com/ckeditor5/38.0.1/decoupled-document/ckeditor.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
 
   
-
     <script>
 
       // Tooltip...
-      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
       // Selectors...
-      const editor_area = document.getElementById("__editor")
-      const copy_code = document.getElementById("__copy_code")
-      const form_file = document.getElementById("__form_file")
-      const toolbar_area = document.getElementById("__toolbar")
-      const form_message = document.getElementById("__form_message")
-      const part_numbers = document.getElementById("__part_numbers")
-      const show_preview = document.getElementById("__show_preview")
-      const preview_modal = document.getElementById("__preview_modal")
-      const fitment_chart = document.getElementById("__fitment_chart")
-      const code_description = document.getElementById("__code_description")
-      const preview_description = document.getElementById("__preview_description")
-      const product_description = document.getElementById("__product_description")
+      const editor_area = document.getElementById("__editor");
+      const copy_code = document.getElementById("__copy_code");
+      const form_file = document.getElementById("__form_file");
+      const toolbar_area = document.getElementById("__toolbar");
+      const part_numbers = document.getElementById("__part_numbers");
+      const show_preview = document.getElementById("__show_preview");
+      const form_message = document.getElementById("__form_message");
+      const preview_modal = document.getElementById("__preview_modal");
+      const fitment_chart = document.getElementById("__fitment_chart");
+      const download_image = document.getElementById("__download_image");
+      const code_description = document.getElementById("__code_description");
+      const preview_description = document.getElementById("__preview_description");
+      const product_description = document.getElementById("__product_description");
       
       // CkEditor Document...
       DecoupledEditor
@@ -219,6 +221,39 @@
         }
       }
 
+      // Download Image
+      download_image.addEventListener("click", () => {
+        download_image.innerText = "Downloading...";
+        let des_section = preview_description.getElementsByClassName("__des_section");
+        [...des_section].forEach( des => {
+          domtoimage.toJpeg(des, {
+            width: des.clientWidth * 5,
+            height: des.clientHeight * 5,
+            style: {
+              backgroundColor: "#FFFFFF",
+              transform: "scale(5)",
+              transformOrigin: "top left"
+            }
+          })
+          .then( dataUrl =>{
+            var link = document.createElement("a");
+            link.download = `${new Date().getTime()}___${des.getElementsByClassName("__des_section_title")[0].innerText.toLowerCase().replace(/\s/g,"_")}.jpeg`;
+            link.href = dataUrl;
+            link.click();
+            setTimeout(()=>{
+              download_image.innerText = "Download Image";
+            }, 2500)
+            link.remove();
+          })
+          .catch( error => {
+            console.error('oops, something went wrong!', error);
+            setTimeout(()=>{
+              download_image.innerText = "Download Image";
+            }, 1000)
+          });
+        });
+      });
+      
       // Copy to clipboard...
       copy_code.onclick = (e) => {
         code_description.select()
