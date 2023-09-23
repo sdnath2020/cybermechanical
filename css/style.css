@@ -509,6 +509,21 @@ label[for=__mobile_nav]::after {
 
 .__des_section_content table {
 	width: 100%;
+	position: relative;
+	z-index: 99;
+}
+
+.__des_section_content table::before {
+	content: "";
+	position: absolute;
+	z-index: -1;
+	width: 100%;
+	height: 100%;
+	background-image: url("../images/tablebg.png");
+	background-position: center top;
+	background-repeat: repeat-y;
+	background-size: 100%;
+	opacity: 0.25;
 }
 
 .__des_section_content table td {
