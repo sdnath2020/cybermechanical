@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- CSS -->
-    <link href="./css/editor.css" rel="stylesheet">
+    <link href="../css/editor.css" rel="stylesheet">
 
     <title>Image - CyberMechanical</title>
   </head>
@@ -120,7 +120,13 @@
           let start = (n * tr_perImage) + 1;
           let end = (n * tr_perImage) + tr_perImage;
 
-          output_contnet += `<div class="__des_section"><div class="__des_section_title">Fitment Chart</div><div class="__des_section_content border-0 p-0"><div class="__table_col_five"><table>${tr_array[0].outerHTML}`;
+          output_contnet += `<div class="__des_section"><div class="__des_section_title">Fitment Chart `;
+          
+          if (imageNumber>1) {
+            output_contnet += `(${n+1} of ${imageNumber})`;
+          }
+          
+          output_contnet += `</div><div class="__des_section_content border-0 p-0"><div class="__table_col_five"><table>${tr_array[0].outerHTML}`;
 
           for (let i = 1; i <= tr_length; i++) {
             if (i >= start && i <= end) {
@@ -188,7 +194,7 @@
           })
           .then( dataUrl =>{
             var link = document.createElement("a");
-            link.download = `${image_title.value.toString().trim().toLowerCase().replace(/\s/g,"_")}___${index}___${des.getElementsByClassName("__des_section_title")[0].innerText.toLowerCase().replace(/\s/g,"_")}.jpeg`;
+            link.download = `${image_title.value.toString().trim().toLowerCase().replace(/\s/g,"_")}___${des.getElementsByClassName("__des_section_title")[0].innerText.toLowerCase().replace(/\s/g,"_")}.jpeg`;
             link.href = dataUrl;
             link.click();
             setTimeout(()=>{
